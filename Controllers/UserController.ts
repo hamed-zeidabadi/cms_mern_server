@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import Joi from 'joi';
 import User from './../Models/UserModel';
 import bcrypt from 'bcryptjs';
 
@@ -7,25 +6,15 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { username, password } = await req.body;
 
-		//validator
-
-		const schema = Joi.object({
-			username: Joi.string().min(6).max(30).required(),
-			password: Joi.string().min(6).max(30).required(),
-		});
-
-		const result = await schema.validate({
-			username,
-			password,
-		});
-
-		if (result.error) {
+		// verify username
+		const user = await User.find({ username });
+		if (user) {
 			res.status(400).json({
-				message: result.error.details[0].message,
+				message: 'username does exist ! ',
 			});
 		}
 
-		//hash password
+		// hash password
 
 		const salt = await bcrypt.genSalt(10);
 		const hashPassword = await bcrypt.hashSync(password, salt);
@@ -46,6 +35,19 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 	try {
+		const { username, password } = await req.body;
+
+		const user = await User.findOne(username);
+
+		if (!user) {
+			res.status(400).json({
+				message: 'user not found ! ',
+			});
+		}
+
+		res.status(200).json({
+			message: 'ok',
+		});
 	} catch (err) {
 		console.log('ERORR : ', err);
 	}
