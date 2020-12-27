@@ -6,6 +6,6 @@ import { userValidator } from '../validator';
 const userRouter: Router = Router();
 
 userRouter.post('/register', userValidator, createUser);
-userRouter.post('/login', userValidator, createUser);
+userRouter.post('/login', userValidator, loginUser);
 
 export default userRouter;

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+
 import User from './../Models/UserModel';
 import bcrypt from 'bcryptjs';
 
@@ -37,11 +38,19 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { username, password } = await req.body;
 
-		const user = await User.findOne(username);
-
+		// verify username
+		const user = await User.findOne({ username });
 		if (!user) {
+			res.status(404).json({
+				message: 'username does not exist ! ',
+			});
+		}
+		// verify password
+		const validatePassword = bcrypt.compare(password, user.password);
+
+		if (!validatePassword) {
 			res.status(400).json({
-				message: 'user not found ! ',
+				message: 'wrong password !',
 			});
 		}
 
