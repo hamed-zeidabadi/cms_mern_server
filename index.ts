@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import * as dotenv from 'dotenv';
 import connectDB from './db';
 import userRouter from './Routes/UserRoute';
+import { Auth } from './auth';
 
 const app = express();
 
@@ -19,6 +20,7 @@ connectDB();
 
 // Add Router
 app.use('/api', userRouter);
+app.get('/test', Auth, () => console.log('ok'));
 
 // Run Server
 const PORT = process.env.PORT || 5000;
