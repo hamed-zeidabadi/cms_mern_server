@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from 'express';
 import User from './../Models/UserModel';
 import bcrypt from 'bcryptjs';
 
+import JWT from 'jsonwebtoken';
+
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { username, password } = await req.body;
@@ -45,8 +47,9 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 				message: 'username does not exist ! ',
 			});
 		}
+
 		// verify password
-		const validatePassword = bcrypt.compare(password, user.password);
+		const validatePassword = bcrypt.compare(password, user!.password);
 
 		if (!validatePassword) {
 			res.status(400).json({
@@ -54,9 +57,31 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 			});
 		}
 
-		res.status(200).json({
-			message: 'ok',
-		});
+		// set JWT
+		const key: string = process.env.SECRET || '';
+
+		const payload = {
+			user: {
+				id: user!.id,
+			},
+		};
+
+		await JWT.sign(
+			payload,
+			key,
+			{
+				expiresIn: 3600 * 24 * 7,
+			},
+
+			(err, token) => {
+				if (err) {
+					res.status(400).json({
+						message: err,
+					});
+				}
+				res.status(200).json({ token });
+			}
+		);
 	} catch (err) {
 		console.log('ERORR : ', err);
 	}
