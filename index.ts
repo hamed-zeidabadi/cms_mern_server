@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 import connectDB from './db';
 import userRouter from './Routes/UserRoute';
 import postRouter from './Routes/PostRoute';
+import { Auth } from './auth';
 
 const app = express();
 

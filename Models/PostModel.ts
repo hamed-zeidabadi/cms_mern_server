@@ -1,11 +1,11 @@
 import mongoose, { Schema, Model, Document } from 'mongoose';
 
 export interface IPost extends Document {
-	title: string;
-	content: string;
-	image: string;
-	user: any | string;
-	timestamps: any | string;
+	title?: string;
+	content?: string;
+	image?: string;
+	user?: any;
+	timestamps?: any;
 }
 
 const postSchema = new Schema(
@@ -20,7 +20,7 @@ const postSchema = new Schema(
 			type: String,
 		},
 		user: {
-			type: mongoose.Types.ObjectId,
+			type: Schema.Types.ObjectId,
 			ref: 'users',
 		},
 	},

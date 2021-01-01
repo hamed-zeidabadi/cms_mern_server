@@ -10,7 +10,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 		const { username, password } = await req.body;
 
 		// verify username
-		const user = await User.find({ username });
+		const user = await User.findOne({ username });
 		if (user) {
 			res.status(400).json({
 				message: 'username does exist ! ',
@@ -61,9 +61,8 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 		const key: string = process.env.SECRET || '';
 
 		const payload = {
-			user: {
-				id: user!.id,
-			},
+			id: user!.id,
+			username: user!.username,
 		};
 
 		await JWT.sign(
